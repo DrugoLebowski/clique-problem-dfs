@@ -54,7 +54,7 @@ let rec searchClique graph n = function
       with CliqueNotFound ->
         searchClique graph n cliques;;
 
-(* cliqueOfTwo: 'a graph -> 'a list list *)
+(* cliqueOfTwo: 'a graph -> 'a list list -> 'a list list *)
 let rec cliqueOfTwo (Gr arcs) cliques = match arcs with
     [] -> cliques
   | (n1, n2)::rest -> cliqueOfTwo (Gr rest) (cliques @ [n1::[n2]]);;
