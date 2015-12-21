@@ -45,31 +45,6 @@ let dfsClique (Gr arcs) k clique =
   in visit [] clique [(List.hd clique)];;
 
 
-(* cliqueOfTwo: 'a graph -> 'a list -> 'a list list *)
-let rec cliqueOfTwo (Gr arcs) = function
-    [] -> []
-  | n::rest -> 
-      (let rec aux z = function
-           [] -> []
-         | (n1, n2)::rest ->
-             if z = n1 then
-               [z::[n2]]@ aux z rest
-             else
-               aux z rest
-       in aux n arcs ) @ cliqueOfTwo (Gr arcs) rest;;
-
-
-(* nodes: 'a graph -> 'a list -> 'a list *)
-let nodes (Gr arcs) clique =
-  let rec aux clique = function
-      [] -> clique
-    | (nodeOne, nodeTwo)::rest -> 
-        if List.mem nodeOne clique then 
-          aux clique rest
-        else 
-          aux (clique@[nodeOne]) rest
-  in aux clique arcs;;
-
 (* searchClique: 'a graph -> int -> 'a list -> 'a list *)
 let rec searchClique graph n = function
     [] | _::[] -> []
@@ -79,11 +54,16 @@ let rec searchClique graph n = function
       with CliqueNotFound ->
         searchClique graph n cliques;;
 
+(* cliqueOfTwo: 'a graph -> 'a list list *)
+let rec cliqueOfTwo (Gr arcs) cliques = match arcs with
+    [] -> cliques
+  | (n1, n2)::rest -> cliqueOfTwo (Gr rest) (cliques @ [n1::[n2]]);;
+
 (* clique: 'a graph -> int -> 'a list *)
 let clique (Gr arcs) n =
   if n < 0 then raise NegativeClique
   else if n = 0 then []
-  else searchClique (Gr arcs) n (cliqueOfTwo (Gr arcs) (nodes (Gr arcs) []));;
+  else searchClique (Gr arcs) n (cliqueOfTwo (Gr arcs) []);;
 
 
 let graph = Gr [(1, 2); (2, 1); (2, 3); (3, 2); (3, 4); (4, 3); (3, 5); (5, 3); (4, 5); (5, 4); (4, 6); (6, 3); (3, 6); (6, 4); (5, 6); (6, 5); (6, 7); (7, 6)];;
@@ -116,3 +96,4 @@ search 0;;
 search 1;;
 search 2;;
 search 3;;
+search (-1);;
